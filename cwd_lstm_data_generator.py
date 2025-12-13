@@ -198,7 +198,7 @@ def pr_generate_signal_lstm_data(anno_signal: AnnoSignal, signal_key: str, share
     sampling_rate = anno_signal._fs
 
     # Scan the peaks of each segment using the peak scanner ----------------------------------------------------------------------
-    sorted_unique_peak_list = rl_peak_selection(rescaled_samples, sampling_rate, rl_framework)
+    sorted_unique_peak_list, signal_segments_list = rl_peak_selection(rescaled_samples, sampling_rate, rl_framework)
     #-----------------------------------------------------------------------------------------------------------------------------
     peak_indexes = [peak._index for peak in sorted_unique_peak_list]
 

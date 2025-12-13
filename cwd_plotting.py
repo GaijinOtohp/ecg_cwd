@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-from nn_structures import RLFramework
+from nn_structures import RLFramework, NNModel
 from cwd_rl_custom import CWDRLCustom, SignalSegment
 from cwd_utils import PeakSample, pub_rescale_signal, pub_compute_distribution, pub_scan_peaks
 
@@ -32,7 +32,7 @@ def rl_peak_selection(rescaled_samples: list[float], sampling_rate: int, rl_fram
         unique_peak_list[peak._index] = peak
     sorted_unique_peak_list: list[PeakSample] = sorted(list(unique_peak_list.values()), key=lambda x: x._index)
 
-    return sorted_unique_peak_list
+    return sorted_unique_peak_list, signal_segments_list
 
 
 def plot_rl_peak_selection(samples: list[float], sampling_rate: int, rl_framework: RLFramework):
@@ -41,7 +41,7 @@ def plot_rl_peak_selection(samples: list[float], sampling_rate: int, rl_framewor
     rescaled_samples = pub_rescale_signal(samples, global_amp_interval)
 
     # Scan the peaks of the signal
-    sorted_unique_peak_list = rl_peak_selection(rescaled_samples, sampling_rate, rl_framework)
+    sorted_unique_peak_list, _ = rl_peak_selection(rescaled_samples, sampling_rate, rl_framework)
 
     # Plot the results
     x_signal = [i / sampling_rate for i in range(len(samples))]
