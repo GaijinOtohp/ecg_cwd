@@ -5,7 +5,8 @@ from nn_structures import RLFramework
 from cwd_rl_custom import CWDRLCustom, SignalSegment
 from cwd_utils import PeakSample, pub_rescale_signal, pub_compute_distribution, pub_scan_peaks
 
-def rl_peak_scan(rescaled_samples: list[float], sampling_rate: int, rl_framework: RLFramework):
+
+def rl_peak_selection(rescaled_samples: list[float], sampling_rate: int, rl_framework: RLFramework):
     signal_segments_list: list[SignalSegment] = CWDRLCustom.pub_segment_the_main_samples(rescaled_samples, sampling_rate, 0.5)
     peak_list: list[PeakSample] = []
     for segment in signal_segments_list:
@@ -34,13 +35,13 @@ def rl_peak_scan(rescaled_samples: list[float], sampling_rate: int, rl_framework
     return sorted_unique_peak_list
 
 
-def plot_rl_peak_scan(samples: list[float], sampling_rate: int, rl_framework: RLFramework):
+def plot_rl_peak_selection(samples: list[float], sampling_rate: int, rl_framework: RLFramework):
     # Rescale samples to be in an amplitude interval of 1
     global_amp_interval = 1
     rescaled_samples = pub_rescale_signal(samples, global_amp_interval)
 
     # Scan the peaks of the signal
-    sorted_unique_peak_list = rl_peak_scan(rescaled_samples, sampling_rate, rl_framework)
+    sorted_unique_peak_list = rl_peak_selection(rescaled_samples, sampling_rate, rl_framework)
 
     # Plot the results
     x_signal = [i / sampling_rate for i in range(len(samples))]

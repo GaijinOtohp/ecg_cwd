@@ -7,7 +7,7 @@ from nn_structures import RLFramework
 from cwd_structures import LSTMTrainingData
 from cwd_utils import PeakSample, PeakInterval, pub_rescale_signal, pub_compute_distribution, pub_scan_peaks, pub_approximate_indexes_to_intervals
 from cwd_rl_custom import CWDRLCustom, SignalSegment
-from cwd_plotting import rl_peak_scan
+from cwd_plotting import rl_peak_selection
 
 
 class LSTMDataBuilderMemory:
@@ -198,7 +198,7 @@ def pr_generate_signal_lstm_data(anno_signal: AnnoSignal, signal_key: str, share
     sampling_rate = anno_signal._fs
 
     # Scan the peaks of each segment using the peak scanner ----------------------------------------------------------------------
-    sorted_unique_peak_list = rl_peak_scan(rescaled_samples, sampling_rate, rl_framework)
+    sorted_unique_peak_list = rl_peak_selection(rescaled_samples, sampling_rate, rl_framework)
     #-----------------------------------------------------------------------------------------------------------------------------
     peak_indexes = [peak._index for peak in sorted_unique_peak_list]
 
