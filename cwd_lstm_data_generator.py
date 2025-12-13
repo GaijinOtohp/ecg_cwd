@@ -7,6 +7,7 @@ from nn_structures import RLFramework
 from cwd_structures import LSTMTrainingData
 from cwd_utils import PeakSample, PeakInterval, pub_rescale_signal, pub_compute_distribution, pub_scan_peaks, pub_approximate_indexes_to_intervals
 from cwd_rl_custom import CWDRLCustom, SignalSegment
+from cwd_plotting import rl_peak_scan
 
 
 class LSTMDataBuilderMemory:
@@ -197,30 +198,7 @@ def pr_generate_signal_lstm_data(anno_signal: AnnoSignal, signal_key: str, share
     sampling_rate = anno_signal._fs
 
     # Scan the peaks of each segment using the peak scanner ----------------------------------------------------------------------
-    signal_segments_list: list[SignalSegment] = CWDRLCustom.pub_segment_the_main_samples(rescaled_samples, sampling_rate, 0.5)
-    peak_list: list[PeakSample] = []
-    for segment in signal_segments_list:
-        # Get the cwd_rl features of the selected segment
-        segment_features, _, _ = pub_compute_distribution(segment._segment_samples, 10)
-        # Predict the initial state of the selected segment
-        predicted_cwd_rl_output = rl_framework._exploitation_model._model.predict(np.array([segment_features]), verbose=0)
-        predicted_cwd_rl_output = predicted_cwd_rl_output[0]
-        # Scan the peaks
-        dim_list = rl_framework._dimensions_list
-        at = dim_list[0]._min + (predicted_cwd_rl_output[0] * (dim_list[0]._max - dim_list[0]._min))
-        art = dim_list[1]._min + (predicted_cwd_rl_output[1] * (dim_list[1]._max - dim_list[1]._min))
-        temp_peak_list = pub_scan_peaks(segment._segment_samples,
-                                    segment._starting_index,
-                                    sampling_rate,
-                                    at,
-                                    art)
-        peak_list.extend(temp_peak_list)
-
-    # Remove duplicates from the peak_list and order it by index
-    unique_peak_list = {}
-    for peak in peak_list:
-        unique_peak_list[peak._index] = peak
-    sorted_unique_peak_list: list[PeakSample] = sorted(list(unique_peak_list.values()), key=lambda x: x._index)
+    sorted_unique_peak_list = rl_peak_scan(rescaled_samples, sampling_rate, rl_framework)
     #-----------------------------------------------------------------------------------------------------------------------------
     peak_indexes = [peak._index for peak in sorted_unique_peak_list]
 
