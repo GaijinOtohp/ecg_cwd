@@ -1,16 +1,17 @@
-from multiprocessing import Manager, shared_memory
+from multiprocessing import Manager, shared_memory, Process
 import pickle
 import numpy as np
 from time import time
 
 from cwd_signals_selector import AnnoSignal, pub_get_selected_signals
-from cwd_structures import CWDFramework, TrainingData, LSTMTrainingData, SelSignalParams, selected_training_signals_params, time_error_tolerance, selected_validation_signals_params
+from cwd_structures import CWDFramework, TrainingData, LSTMTrainingData, SelSignalParams, selected_training_signals_params, time_error_tolerance, selected_validation_signals_params, selected_testing_signals_params
 from cwd_nn import pub_create_cwd_framework, pub_fit, pub_initialize_cwd_framework
 from cwd_rl_data_generator import pub_generate_rl_data
 from db_helper import DbHelper
 from cwd_lstm_data_generator import pub_generate_lstm_data
 from cwd_validation_tools import roc_thresholds_tune, validate_lstm_model
 from cwd_utils import segment_inputs_and_outputs_redundantly, sort_dataset_sequences_to_flat_batches, extract_validation_sub_metrics
+from cwd_plotting import plot_rl_peak_selection, plot_lstm_peak_classification
 
 
 class Test:
@@ -29,6 +30,15 @@ class Test:
         for class_label, validation_metrics_item in zip(time_error_tolerance.keys(), cwd_framework._cwd_lstm_model._validation_data._validation_metrics):
             print(f"{class_label}:")
             extract_validation_sub_metrics(validation_metrics_item)
+
+        # Plot test results
+        selected_testing_anno_signals_dict: dict[str, AnnoSignal] = pub_get_selected_signals("./", selected_testing_signals_params)
+        samples = list(selected_testing_anno_signals_dict.values())[0]._signal
+        fs = list(selected_testing_anno_signals_dict.values())[0]._fs
+        # Peak selection
+        Process(target=plot_rl_peak_selection, args=(samples, fs, cwd_framework._cwd_rl_framework)).start()
+        # Peak classification
+        Process(target=plot_lstm_peak_classification, args=(samples, fs, cwd_framework)).start()
 
 
     def get_cwd_framework(self, framework_name: str):

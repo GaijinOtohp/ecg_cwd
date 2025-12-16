@@ -51,6 +51,11 @@ time_error_tolerance = {
 }
 
 
+selected_testing_signals_params = {
+    "sele0166/1/0-30": SelSignalParams("sele0166", 1, 0, 30)
+}
+
+
 selected_training_signals_params = {
     "sel30/0/27-57": SelSignalParams("sel30", 0, 27, 57),
     "sel32/0/22-52": SelSignalParams("sel32", 0, 22, 52),
