@@ -14,7 +14,7 @@ This python project is based on LSTM and reinforcement learning for the delineat
   - [2. Peak classification](#2-peak-classification)
 - [Application](#application)
   - [1. Prerequisites](#1-prerequisites)
-  - [2. Train, validation, and results plot](#2-train-validation-and-results-plot)
+  - [2. Training, validation, and results plot](#2-training-validation-and-results-plot)
 - [Customization of the reinforcement learning framework](#customization-of-the-reinforcement-learning-framework)
   - [1. Framework components](#1-framework-components)
   - [2. Required customization](#2-required-customization)
